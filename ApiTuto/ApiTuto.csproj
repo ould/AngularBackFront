@@ -20,10 +20,12 @@
     <None Remove="Models\" />
     <None Remove="Helpers\" />
     <None Remove="Services\" />
+    <None Remove="ClientFront\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Services\" />
+    <Folder Include="ClientFront\" />
   </ItemGroup>
 </Project>
