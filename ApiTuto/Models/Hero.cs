@@ -1,7 +1,7 @@
 ﻿using System;
 namespace ApiTuto.Models
 {
-	public class Hero : IHeros
+	public class Hero : IHero
 	{
 
         public int id { get; set; }

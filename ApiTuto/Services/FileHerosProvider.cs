@@ -9,18 +9,18 @@ namespace ApiTuto.Services
 	{
         private string filePathDb = "./db.txt";       
 
-        public async Task<IEnumerable<IHeros>> GetAllHeroes()
+        public async Task<IEnumerable<IHero>> GetAllHeroes()
         {
             var herosDbFromFile = await File.ReadAllTextAsync(filePathDb);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<Hero>>(herosDbFromFile) ?? new List<Hero>();
         }
 
-        public async Task<IHeros> GetHeroById(int id)
+        public async Task<IHero> GetHeroById(int id)
         {
             return (await GetAllHeroes()).Where(h => h.id == id).FirstOrDefault();
         }
 
-        public async Task<IHeros> PostHero(IHeros value)
+        public async Task<IHero> PostHero(IHero value)
         {
             var listeHerosAvantPost = await GetAllHeroes();
             var lastId = listeHerosAvantPost.LastOrDefault()?.id ?? 0;
@@ -33,7 +33,7 @@ namespace ApiTuto.Services
             return newHero;
         }
 
-        public async Task<IHeros> PutHero(int id, IHeros value)
+        public async Task<IHero> PutHero(int id, IHero value)
         {
             var listeHeros = await GetAllHeroes();
             var heroAUpdate = listeHeros.Where(h => h.id == id).FirstOrDefault();

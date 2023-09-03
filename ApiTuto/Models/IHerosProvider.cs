@@ -4,10 +4,10 @@ namespace ApiTuto
 {
     public interface IHerosProvider
     {
-        Task<IEnumerable<IHeros>> GetAllHeroes();
-        Task<IHeros> GetHeroById(int id);
-        Task<IHeros> PostHero(IHeros value);
-        Task<IHeros> PutHero(int id, IHeros value);
+        Task<IEnumerable<IHero>> GetAllHeroes();
+        Task<IHero> GetHeroById(int id);
+        Task<IHero> PostHero(IHero value);
+        Task<IHero> PutHero(int id, IHero value);
         Task DeleteHero(int id);
     }
 }

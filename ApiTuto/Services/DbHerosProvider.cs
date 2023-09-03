@@ -20,23 +20,23 @@ namespace ApiTuto.Services
         }
         
 
-        public async Task<IEnumerable<IHeros>> GetAllHeroes()
+        public async Task<IEnumerable<IHero>> GetAllHeroes()
         {
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                IEnumerable<IHeros> heros = await connection.QueryAsync<Hero>("select * from Heros");
+                IEnumerable<IHero> heros = await connection.QueryAsync<Hero>("select * from Heros");
                 return heros;
             }
         }
 
-        public async Task<IHeros> GetHeroById(int id)
+        public async Task<IHero> GetHeroById(int id)
         {
-                IHeros heros = await QueryFistHeroOrDefautAsync("select * from Heros where id = @id ", new Hero { id = id });
+                IHero heros = await QueryFistHeroOrDefautAsync("select * from Heros where id = @id ", new Hero { id = id });
                 return heros;          
         }
 
-        public async Task<IHeros> PostHero(IHeros value)
+        public async Task<IHero> PostHero(IHero value)
         {
                 var result = await ExecuteAsyncHeros("insert into Heros (Name) values (@name)", value);
                 if (result == 1)return await QueryFistHeroOrDefautAsync("select * from Heros where Name = @name order by Id Desc ", value);
@@ -45,7 +45,7 @@ namespace ApiTuto.Services
             
         }
 
-        public async Task<IHeros> PutHero(int id, IHeros value)
+        public async Task<IHero> PutHero(int id, IHero value)
         {
             
             var heroExistant = await GetHeroById(id);
@@ -71,14 +71,14 @@ namespace ApiTuto.Services
         }
 
 
-        private async Task<int> ExecuteAsyncHeros(string query, IHeros heros)
+        private async Task<int> ExecuteAsyncHeros(string query, IHero heros)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
             return await connection.ExecuteAsync(query, new { heros.id,  heros.name});
 
         }
 
-        private async Task<IHeros> QueryFistHeroOrDefautAsync(string query, IHeros heros)
+        private async Task<IHero> QueryFistHeroOrDefautAsync(string query, IHero heros)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
             return await connection.QueryFirstOrDefaultAsync<Hero>(query, new { heros.id, heros.name });

@@ -14,22 +14,22 @@ public class HerosControllerTest
         var herosProviderMock = new Moq.Mock<IHerosProvider>();
 
 
-        var listeMoq = new List<Heros>
+        var listeMoq = new List<Hero>
         {
-            new Heros
+            new Hero
             {
                 id = 0,
                 name = "testMoq"
             }
         };
 
-        herosProviderMock.Setup(m => m.GetAllHeroes()).Returns(Task.FromResult<IEnumerable<Heros>>(listeMoq));
+        herosProviderMock.Setup(m => m.GetAllHeroes()).Returns(Task.FromResult<IEnumerable<IHero>>(listeMoq));
 
         var herosController = new HerosController(herosProviderMock.Object);
 
 
 
-        var result = (List<Heros>)((JsonResult)(await herosController.Get())).Value;
+        var result = (List<Hero>)((JsonResult)(await herosController.Get())).Value;
 
         //Assert.NotEmpty(result);
 
@@ -62,28 +62,29 @@ public class HerosControllerTest
     public async Task GetHeroById()
     {
         var herosProviderMock = new Moq.Mock<IHerosProvider>();
+        var index = 1;
 
-
-        var listeMoq = new List<Heros>
+        var listeMoq = new List<Hero>
         {
-            new Heros
+            new Hero
             {
                 id = 0,
                 name = "testMoq"
             },
-            new Heros {
+            new Hero {
                 id = 1,
                 name = "testMoq1"
             }
         };
-
-        herosProviderMock.Setup(m => m.GetHeroById(1)).Returns(Task.FromResult<Heros>(listeMoq.LastOrDefault()));
+        herosProviderMock.Setup(m => m.GetAllHeroes()).Returns(Task.FromResult<IEnumerable<IHero>>(listeMoq));
 
         var herosController = new HerosController(herosProviderMock.Object);
 
 
 
-        var result = (List<Heros>)((JsonResult)(await herosController.Get())).Value;
+        var result = await herosController.Get(index);
+
+        //Assert.Equal(listeMoq.ElementAt(index).name, result); //TODO : a faire 
 
 
     }
