@@ -27,21 +27,21 @@ namespace ApiTuto.Services
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                IEnumerable<IHero> heros = await connection.QueryAsync<Hero>("select * from Heros");
+                IEnumerable<IHero> heros = await connection.QueryAsync<Hero>("select Id, Name from Heros");
                 return heros;
             }
         }
 
         public async Task<IHero> GetHeroById(int id)
         {
-                IHero heros = await QueryFistHeroOrDefautAsync("select * from Heros where id = @id ", new Hero { id = id });
+                IHero heros = await QueryFistHeroOrDefautAsync("select Id, Name from Heros where id = @id ", new Hero { id = id });
                 return heros;          
         }
 
         public async Task<IHero> PostHero(IHero value)
         {
                 var result = await ExecuteAsyncHeros("insert into Heros (Name) values (@name)", value);
-                if (result == 1)return await QueryFistHeroOrDefautAsync("select * from Heros where Name = @name order by Id Desc ", value);
+                if (result == 1)return await QueryFistHeroOrDefautAsync("select Id, Name from Heros where Name = @name order by Id Desc ", value);
 
                 throw new Exception("Erreur dans la requete Post Heros");
             
