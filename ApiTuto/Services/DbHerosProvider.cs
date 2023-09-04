@@ -17,7 +17,7 @@ namespace ApiTuto.Services
         public DbHerosProvider(IConfiguration configuration, ILogger<DbHerosProvider> logger)
 		{
             _configuration = configuration;
-            this._logger = logger;
+            _logger = logger;
             _connectionString = _configuration.GetConnectionString("dbTestVincent") ?? "";
         }
         
@@ -69,7 +69,7 @@ namespace ApiTuto.Services
         public async Task DeleteHero(int id)
         {
             var result = await ExecuteAsyncHeros("delete from Heros where Id = @id", new Hero {id = id });
-            if (result != 1) _logger.LogWarning("Error in {methodName} : Could not find id {id} ", nameof(DeleteHero), id ); //TODO gestion des erreurs
+            if (result != 1) _logger.LogWarning("Error in {methodName} : Could not find id {id} ", nameof(DeleteHero), id ); //log method name; pour que meme si chgt methode on garde lebon log/ mise en forme permet l'utilisation des logs dans des outils dediés
         }
 
 
