@@ -15,10 +15,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddSpaStaticFiles(configuration =>
-{
-    configuration.RootPath = "ClientFront/dist";
-});
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -26,6 +23,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IHerosProvider, DbHerosProvider>();
+//builder.Services.AddScoped<IHerosProvider, FileHerosProvider>();
+
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "ClientFront/dist";
+});
 
 
 var app = builder.Build();
@@ -39,14 +42,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSpa(spa =>
-{
-    spa.Options.SourcePath = "ClientFront";
-    if (app.Environment.IsDevelopment())
-    {
-        spa.UseAngularCliServer(npmScript: "start");
-    }
-});
+//app.UseSpa(spa =>
+//{
+//    spa.Options.SourcePath = "ClientFront";
+//    if (app.Environment.IsDevelopment())
+//    {
+//        spa.UseAngularCliServer(npmScript: "start");
+//    }
+//});
 
 if (!app.Environment.IsDevelopment())
 {
