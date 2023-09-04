@@ -11,11 +11,13 @@ namespace ApiTuto.Services
 	{
 
         private readonly IConfiguration _configuration;
+        private readonly ILogger<DbHerosProvider> _logger;
         private readonly string _connectionString;
 
-        public DbHerosProvider(IConfiguration configuration)
+        public DbHerosProvider(IConfiguration configuration, ILogger<DbHerosProvider> logger)
 		{
             _configuration = configuration;
+            this._logger = logger;
             _connectionString = _configuration.GetConnectionString("dbTestVincent") ?? "";
         }
         
@@ -67,20 +69,20 @@ namespace ApiTuto.Services
         public async Task DeleteHero(int id)
         {
             var result = await ExecuteAsyncHeros("delete from Heros where Id = @id", new Hero {id = id });
-            if (result != 1) throw new Exception("Erreur dans la requete Delete Heros");
+            if (result != 1) _logger.LogWarning("Error in {methodName} : Could not find id {id} ", nameof(DeleteHero), id ); //TODO gestion des erreurs
         }
 
 
         private async Task<int> ExecuteAsyncHeros(string query, IHero heros)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using SqlConnection connection = new(_connectionString);
             return await connection.ExecuteAsync(query, new { heros.id,  heros.name});
 
         }
 
         private async Task<IHero> QueryFistHeroOrDefautAsync(string query, IHero heros)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using SqlConnection connection = new(_connectionString);
             return await connection.QueryFirstOrDefaultAsync<Hero>(query, new { heros.id, heros.name });
 
         }

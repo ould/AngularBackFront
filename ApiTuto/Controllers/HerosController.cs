@@ -53,7 +53,7 @@ namespace ApiTuto.Controllers
 
 
         // PUT api/values/5
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromBody] Hero value)
         {
             
