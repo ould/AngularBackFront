@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <!--We can use the PropertyGroup to assign values to variables that we can use elsewhere in this file.-->
+    <FrontEndRoot>ClientFront</FrontEndRoot>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -14,6 +16,8 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.10" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,4 +32,36 @@
     <Folder Include="Services\" />
     <Folder Include="ClientFront\" />
   </ItemGroup>
+
+
+
+  <!--First, we are calling this target DebugEnsureNodeEnv. This target can be called anything. This target contains a command that is to be executed before the Build part of the process. In .NET Core, the Build target refers to the part of the build process that transforms source code into executable files.-->
+<!--Additionally, we can add conditions to the target. The DebugEnsureNodeEnv also checks that the configuration value is Debug (the default value) and checks if the node_modules folder exists. If those conditions are not met, the target checks the node version. If the check is successful it installs the NPM packages, otherwise, it spits out an error message.-->
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(FrontendRoot)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(FrontendRoot)" Command="npm install" />
+  </Target>
+
+
+  <!--To publish Angular with ASP.NET Core, we must do it after the ComputeFilesToPublish target of the build process. Like the previous target, we also give it a name. This time we are going to call it PublishAngular. This target will run after MSBuild finishes computing and all the files that need to be copied into the publish folder.
+This target will install the NPM packages and also build the Angular project. Afterward, we define the DistFiles item to include the dist folder that contains the published Angular SPA. Then the target adds the full path of DistFiles items as ResolvedFileToPublish items unless there is already a ResolvedFileToPublish item with the same identity. This avoids duplicate paths in the publish logic. Lastly, this element also tells the publish logic to use a relative path which we have set to frontend-project/dist and is then copied to the publish folder.-->
+
+  <Target Name="PublishAngular" AfterTargets="ComputeFilesToPublish">
+    <Exec Command="npm install" WorkingDirectory="$(FrontendRoot)" />
+    <Exec Command="npm run build -- --prod" WorkingDirectory="$(FrontendRoot)" />
+    <ItemGroup>
+      <DistFiles Include="$(FrontendRoot)dist\**" />
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+</Target>
+
 </Project>
