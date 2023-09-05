@@ -6,6 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "ClientFront/dist";
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("HeroesPolicy",
@@ -25,10 +30,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IHerosProvider, DbHerosProvider>();
 //builder.Services.AddScoped<IHerosProvider, FileHerosProvider>();
 
-builder.Services.AddSpaStaticFiles(configuration =>
-{
-    configuration.RootPath = "ClientFront/dist";
-});
+
 
 
 var app = builder.Build();
@@ -42,14 +44,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseSpa(spa =>
-//{
-//    spa.Options.SourcePath = "ClientFront";
-//    if (app.Environment.IsDevelopment())
-//    {
-//        spa.UseAngularCliServer(npmScript: "start");
-//    }
-//});
+app.MapWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+{
+    builder.UseSpa(spa =>
+    {
+        spa.Options.SourcePath = "ClientFront";
+        if (app.Environment.IsDevelopment())
+        {
+            spa.UseAngularCliServer(npmScript: "start");
+        }
+    });
+});
+
+
 
 if (!app.Environment.IsDevelopment())
 {
